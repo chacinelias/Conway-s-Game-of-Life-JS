@@ -1,48 +1,44 @@
-var grid = [];
-let status;
-var rows = 10;
-var cols = 10;
+let grid = [];
+let rows = 10;
+let cols = 10;
+let initial_prob = 0.7;
+let live_cells = 0;
 
 $(document).ready(function () {
-    var cell = "<div class=\"cell\" onclick=\"handleClick()\"/>"
+    let cell = "<div class=\"cell\" onclick=\"handleClick()\"/>";
 
     for (let i = 0; i < rows*cols; i++) {
-        let color = Math.random() >= 0.7 ? 'gray': 'white';
-        let new_cell = $(cell).clone().attr('id', i).css('background-color', color);
+        let rand = Math.random() >= initial_prob ? true : false;
+        let newCell = cellMaker({id: i, status: rand, color: (rand ? 'gray' : 'white') });
 
-        $("#wrapper").append(new_cell);
+        $("#wrapper").append($(cell).clone().attr('id', newCell.id).css('background-color', newCell.color));
+        grid[i] = newCell;
+        if(newCell.status) live_cells++;
+    }
 
-        status = color == 'gray' ? true : false;
-        // console.log($(new_cell).attr('id') +' '+ status);
-    }   
-
+    console.log(live_cells);
 });
+
+$(document).ready(function(){
+    $("#score-board").html("Live Cells: " + live_cells);
+})
 
 function handleClick(){
     $(document).click(function(e) {
-        console.log(e.target.id);
-        lifeAndDeath(e.target.id);
+        death(e.target.id);
     });
 }
 
-function lifeAndDeath(cell_id){
+function death(cell_id){
     $('#' + cell_id).css('background-color', 'white');
-
+    live_cells--;
+    console.log(live_cells);
 }
 
-
-/*below is the factory function for creating cell objects.
-cell objects make it easier to keep track of live and dead cells*/
-
-let cellMaker = {
-    status: null,
-    color: this.status == true ? 'gray' : 'white',
+//cell factory
+const cellMaker = ({id, status, color}) => ({
+    id,
+    status,
+    color,
     neighbors: null
-};
-
-let a = cellMaker;
-
-a.status = true;
-a.neighbors = 3;
-
-console.log(a);
+})
