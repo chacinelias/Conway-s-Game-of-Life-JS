@@ -5,27 +5,7 @@
     <meta charset="UTF-8">
     <title>Game of Life</title>
 
-    <style>
-        #wrapper {
-            width: 500px;
-            height: 500px;
-            margin-left: auto;
-            margin-right: auto;
-            display: grid;
-            grid-template-columns: 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px;
-            outline: solid;
-        }
-
-        .cell {
-            width: 40px;
-            height: 40px;
-        }
-
-        .text{
-            font-family: 'Major Mono Display', monospace;
-            text-align: center
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 
     <link href="https://fonts.googleapis.com/css?family=Major+Mono+Display" rel="stylesheet">
 </head>
@@ -36,8 +16,10 @@
 
     <h1 class="text">The Game of Life</h1>
     <div id="wrapper"></div>
-    <div id="score-board" class="text" style="font-size: 26px"></div>
+    <div id="score-board" class="text" style="font-size: 26px"></div><br/>
+    <div id="gen_button" class="gen_button" onclick="generation()">generate</div>
 
 </body>
 
 </html>
+
