@@ -3,10 +3,11 @@ let prev_grid = []; //contains booleans
 
 const rows = 10;
 const cols = 10;
-const initial_prob = 0; //probability that a cell is alive
+const initial_prob = 0.3; //probability that a cell is alive
 let live_cells = 0;
 let interval;
 let toggle_auto = false;
+let framerate = 100;
 
 //initial creation of grid/cells and display scoreboard
 $(document).ready(function () {
@@ -38,17 +39,18 @@ $(document).ready(function () {
         live_cells = 0;
         for (let i = 0; i < grid.length; i++) {
             prev_grid[i] = grid[i].status;
-            
-            if(grid[i].status) live_cells++;
+
+            if (grid[i].status) live_cells++;
         }
         showScoreboard();
     });
 
     $('.button').click(function (e) {
+        let button = e.target.id;
 
-        if (e.target.id === 'gen_button') {
+        if (button === 'gen_button') {
             generation();
-        } else {
+        } else if (button === 'autoGen_button') {
             autoGen();
         }
     })
@@ -73,16 +75,17 @@ function generation() {
     for (let i = 0; i < grid.length; i++) {
         prev_grid[i] = grid[i].status;
 
-        if(grid[i].status) live_cells++;
+        if (grid[i].status) live_cells++;
     }
 
     showScoreboard();
 }
 
+//generate automatically
 function autoGen() {
 
     if (!toggle_auto) {
-        interval = setInterval(generation, 500);
+        interval = setInterval(generation, framerate);
         toggle_auto = true;
     } else {
         clearInterval(interval);
