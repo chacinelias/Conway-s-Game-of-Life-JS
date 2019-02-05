@@ -1,70 +1,115 @@
-let grid = [];
-let prev_grid = [];
+let grid = []; //contains cell instances
+let prev_grid = []; //contains booleans
 
 const rows = 10;
 const cols = 10;
-const initial_prob = 0;
+const initial_prob = 0; //probability that a cell is alive
 let live_cells = 0;
+let interval;
+let toggle_auto = false;
 
-//creation of cells in grid and display scoreboard
+//initial creation of grid/cells and display scoreboard
 $(document).ready(function () {
     let div_str = '<div class=\"cell\"/>';
 
-    for (let i = 0; i < rows*cols; i++) {
+    for (let i = 0; i < rows * cols; i++) {
         let rand = Math.random() <= initial_prob ? true : false;
         let newCell = new Cell(i, rand);
         grid.push(newCell);
+        prev_grid.push(rand);
 
         $('#wrapper').append($(div_str).clone()
             .attr('id', newCell.id)
             .css('background-color', '#EE7600')
             .css('opacity', newCell.status ? 1 : 0));
-        if(newCell.status) live_cells++;
+        if (newCell.status) live_cells++;
         showScoreboard();
     }
 
-    $('.cell').click(function(e) {
+    $('.cell').click(function (e) {
         cell = grid[e.target.id];
-        console.log(cell.id);
-        if(cell.status){
+
+        if (cell.status) {
             cell.death();
-            live_cells--;
-        }else{
+        } else {
             cell.birth();
-            live_cells++;
+        }
+
+        live_cells = 0;
+        for (let i = 0; i < grid.length; i++) {
+            prev_grid[i] = grid[i].status;
+            
+            if(grid[i].status) live_cells++;
         }
         showScoreboard();
-    } );
+    });
+
+    $('.button').click(function (e) {
+
+        if (e.target.id === 'gen_button') {
+            generation();
+        } else {
+            autoGen();
+        }
+    })
 });
 
 //spawn generation
-function generation(){
+function generation() {
     live_cells = 0;
 
+    for (let i = 0; i < grid.length; i++) {
+        let num = getNumLiveNeighbors(i);
 
-    //TO DO: make DEEP copy of grid array!!! shallow copy won't work
-    prev_grid = grid;
+        if (prev_grid[i]) {
+            if (num < 2 || num > 3) grid[i].death();
 
-    prev_grid.forEach(function(cell){
+        } else {
+            if (num == 3) grid[i].birth();
 
-        let num = cell.getNumLiveNeighbors();
-        if(cell.status){
-            if(num < 2 || num > 3){
-                cell.death();
-                live_cells--;
-            }
-        }else{
-            if(num == 3){
-                cell.birth();
-                live_cells++;
-            }
         }
-    });
+    }
+
+    for (let i = 0; i < grid.length; i++) {
+        prev_grid[i] = grid[i].status;
+
+        if(grid[i].status) live_cells++;
+    }
+
     showScoreboard();
 }
 
-//show SCOREBOARD
-function showScoreboard(){
-    $('#score-board').html('Live Cells:'  + '<span style=color:#EE7600>' + live_cells + '</span>');
+function autoGen() {
 
+    if (!toggle_auto) {
+        interval = setInterval(generation, 500);
+        toggle_auto = true;
+    } else {
+        clearInterval(interval);
+        interval = null;
+        toggle_auto = false;
+    }
+}
+
+//show SCOREBOARD
+function showScoreboard() {
+    $('#scoreboard').html('Live Cells:' + '<span style=color:#EE7600>' + live_cells + '</span>');
+
+}
+
+function getNumLiveNeighbors(i) {
+
+    let neighbors = [
+        prev_grid[i - cols - 1], prev_grid[i - cols], prev_grid[i - cols + 1],
+        prev_grid[i - 1], prev_grid[i + 1],
+        prev_grid[i + cols - 1], prev_grid[i + cols], prev_grid[i + cols + 1]
+    ];
+
+    let sum = 0;
+
+    neighbors.forEach(function (cell) {
+        if (cell) sum++;
+    });
+
+    return sum;
 }

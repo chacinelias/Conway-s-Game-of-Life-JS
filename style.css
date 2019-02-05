@@ -33,12 +33,13 @@ body{
     transform: translate(-50%, -50%);
 }
 
-.gen_button{
+.button{
     width: 100px;
     height: 40px;
     background-color: #EE7600;
     margin: auto;
     font-family: 'Major Mono Display', monospace;
+    font-size: 24px;
     color: white;
     text-align: center
 }
